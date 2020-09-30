@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import Geolocation from '@react-native-community/geolocation';
 import { render } from 'react-dom';
 
-const port = process.env.PORT || 19006;
+const port = process.env.PORT || 3000;
 const hostname = 'https://gps-stats-server.herokuapp.com:' + port || 'http://localhost' + port;
 
 
