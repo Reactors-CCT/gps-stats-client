@@ -5,17 +5,19 @@ import io from 'socket.io-client';
 import Geolocation from '@react-native-community/geolocation';
 import { render } from 'react-dom';
 
-const port = process.env.PORT || 3000;
-const hostname = 'https://gps-stats-server.herokuapp.com:' + port || 'http://localhost' + port;
+var dev = true;
+var hostname = dev?  'http://localhost:3000' : 'https://gps-stats-server.herokuapp.com';
 
+console.log("Connecting to " + hostname);
 
 const socket = io.connect(hostname);
 
 export default function App() {
-  const [user, setUser] = useState({latitude: 0, longitude: 0, location: ''});
-  const [stats, setStats] = useState([]);
-
+  const [user, setUser] = useState('');
+  const [userData, setUserData] = useState({userSocket: '', latitude: 0, longitude: 0, location: ''});
+  const [stats, setStats] = useState([]);  
   const [timer, setTimer] = useState(0);
+  const [userLocation, setUserLocation] = useState('');
 
     /*useEffect(()=>{
         setTimeout(()=>{
@@ -24,6 +26,10 @@ export default function App() {
         },1000);
     }, [timer]);*/
   
+  socket.on('newUser',data=>{  
+    setUser(data);   
+  });
+ 
   socket.on('newStats',data=>{  
     for(var i=0; i<data.length;i++){
       setStats([...stats, {location: data[i].location, counter: data[i].counter}]);
@@ -41,23 +47,25 @@ export default function App() {
       let loc = "Other";
       if('district' in json.results[0].components){         
         loc = json.results[0].components.district;
-        setUser({latitude: lat, longitude: long, location: loc}); 
+        setUserLocation(loc);
+        setUserData({userSocket: user, latitude: lat, longitude: long, location: loc}); 
       } else if ('town' in json.results[0].components){
         loc = json.results[0].components.town;
-        setUser({latitude: lat, longitude: long, location: loc});           
+        setUserLocation(loc);
+        setUserData({userSocket: user, latitude: lat, longitude: long, location: loc});           
       } else {
-        setUser({latitude: lat, longitude: long, location: loc});  
+        setUserLocation(loc);
+        setUserData({userSocket: user, latitude: lat, longitude: long, location: loc});  
       }
       //const {latitude, longitude, location} = user;
       //console.log({latitude, longitude, location});
       //return socket.emit('position',{latitude,longitude,location}); 
-      return socket.emit('sendData',{lat,long,loc});
+      return socket.emit('sendData',{user,loc});
   }); 
   }
 
 
-  function locateMe(){  
-      
+  function locateMe(){   
     Geolocation.getCurrentPosition(position =>{
       findLocation(position.coords.latitude,position.coords.longitude); 
     }, error => {
@@ -69,15 +77,16 @@ export default function App() {
   return (  
     <View style={styles.container}>
       <Text>Welcome to GPS Sensor App!</Text>
+      <Text>User: {user}</Text>
       <Button onPress={locateMe} title="Locate Me"/>   
-      <Text>{user.latitude}</Text>
-      <Text>{user.longitude}</Text>
-      <Text>{user.location}</Text>
+      <Text>{userData.latitude}</Text>
+      <Text>{userData.longitude}</Text>
+      <Text>{userData.location}</Text>
       
       <div>
         <ul>
           {stats.map(({location, counter},  index) =>(
-                <li>{location}:{counter}</li>
+                <li key={index}>{location}:{counter}</li>
           ))}          
         </ul>
       </div>
