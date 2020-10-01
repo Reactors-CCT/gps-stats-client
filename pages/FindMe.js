@@ -1,12 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useRef } from 'react';
-import { Animated, StyleSheet, Text, View, Button } from 'react-native';
+import React, { useState, useRef, useEffect} from 'react';
+import { Animated, StyleSheet, Text, View, Button, BackHandler } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 
-export default function FindMe({ navigation }) {
+
+export default function FindMe ({ navigation }) {
+
   const socket = navigation.state.params.socket;
-  
+  const [stats, setStats] = useState('');
   const [user, setUser] = useState(socket.id);
+  const [countPeople, setCountPeople] = useState(0);  
+  const [isLocated, setIsLocated] = useState(true);
   const [userData, setUserData] = useState({
     userSocket: '', 
     latitude: 0, 
@@ -17,25 +21,32 @@ export default function FindMe({ navigation }) {
     locality: '',
     postcode: ''
   });
-  const [stats, setStats] = useState([]);  
 
+  
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-    /*useEffect(()=>{
-        setTimeout(()=>{
-            setTimer(timer+1);
-            //socket.emit('refresh');
-        },1000);
-    }, [timer]);*/
+  useEffect(() => {    
+    const interval = setInterval(() => {      
+      socket.emit('refresh');
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
   
   socket.on('newUser',data=>{  
-    setUser(data);   
+    setUser(data);  
   });
  
-  socket.on('newStats',data=>{  
-    for(var i=0; i<data.length;i++){
-      setStats([...stats, {location: data[i].location, counter: data[i].counter}]);
+  socket.on('newStats',data=>{ 
+    let textStats = '';
+    let counter = 0;
+    for(var i=0; i<data.length;i++){     
+      textStats += data[i].location + ': ' + data[i].counter + '\n'
+      counter += data[i].counter;
     }
+    setCountPeople(counter);
+    setStats(textStats);    
   }); 
 
   let findLocation= (lat, long) =>{
@@ -79,14 +90,15 @@ export default function FindMe({ navigation }) {
       toValue: 1,
       duration: 3000
     }).start();
+    setIsLocated(false);    
   } 
   
-  /* need to erase previous list and put the new one */
+
   return (  
     <View style={styles.container}>
       <Text>Welcome to GPS Sensor App!</Text>
       <Text>User: {user}</Text>
-      <Button onPress={locateMe} title="Where am I?"/>
+      <Button onPress={locateMe} title="Where am I?" disabled={!isLocated}/>
       <Animated.View
         style={[
           styles.fadingContainer,
@@ -103,15 +115,19 @@ export default function FindMe({ navigation }) {
         <Text>Locality: {userData.locality}</Text>
         <Text>Postcode: {userData.postcode}</Text>
       </Animated.View>   
-      
-      
-      <div>
-        <ul>
-          {stats.map(({location, counter},  index) =>(
-                <li key={index}>{location}:{counter}</li>
-          ))}          
-        </ul>
-      </div>
+      <Animated.View
+        style={[
+          styles.fadingContainer,
+          {
+            opacity: fadeAnim // Bind opacity to animated value
+          }
+        ]}
+      >
+        <Text>Statistics: </Text>
+        <Text>Currently {countPeople} users online</Text>
+        <Text>User Locations:</Text>
+        <Text>{stats}</Text>
+      </Animated.View>   
       <StatusBar style="auto" />
     </View>
   );

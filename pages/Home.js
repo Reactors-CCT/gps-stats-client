@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import io from 'socket.io-client';
 
 var dev = false;
@@ -11,7 +10,6 @@ console.log("Connecting to " + hostname);
 const socket = io.connect(hostname);
 
 export default function Home({ navigation }) {
-    
     return (
         <View style={styles.container}>
             <Text style={styles.team}>Reactors</Text>
