@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Button, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import io from 'socket.io-client';
 
-var dev = true;
+var dev = false;
 var hostname = dev?  'http://localhost:3000' : 'https://gps-stats-server.herokuapp.com';
 
 console.log("Connecting to " + hostname);
