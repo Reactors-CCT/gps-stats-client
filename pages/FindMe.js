@@ -75,7 +75,6 @@ export default function FindMe ({ navigation }) {
       location: loc, 
       country: data.country,
       county: data.county,
-      locality: data.locality,
       postcode: data.postcode
     }); 
   }
@@ -95,11 +94,26 @@ export default function FindMe ({ navigation }) {
   
 
   return (  
-    <View style={styles.container}>
-      <Text>Welcome to GPS Sensor App!</Text>
+    <View style={styles.header}>
+      <Text style={styles.title}>Welcome to GPS Sensor App!</Text>
       <Text>User: {user}</Text>
-      <Button onPress={locateMe} title="Where am I?" disabled={!isLocated}/>
-      <Animated.View
+      <View style={styles.container}>      
+        <Animated.View
+          style={[
+            styles.fadingContainer,
+            {
+              opacity: fadeAnim // Bind opacity to animated value
+            }
+          ]}
+        >
+          <Text>Statistics: </Text>
+          <Text>Currently {countPeople} users online</Text>
+          <Text>User Locations:</Text>
+          <Text>{stats}</Text>
+          <StatusBar style="auto" />
+        </Animated.View>
+        <Button onPress={locateMe} title="Where am I?" disabled={!isLocated}/> 
+        <Animated.View
         style={[
           styles.fadingContainer,
           {
@@ -107,51 +121,93 @@ export default function FindMe ({ navigation }) {
           }
         ]}
       >
-        <Text>Latitude: {userData.latitude}</Text>
-        <Text>Longitude: {userData.longitude}</Text>
-        <Text>Country: {userData.country}</Text>
-        <Text>County: {userData.county}</Text>
-        <Text>District or Town: {userData.location}</Text>
-        <Text>Locality: {userData.locality}</Text>
-        <Text>Postcode: {userData.postcode}</Text>
-      </Animated.View>   
-      <Animated.View
-        style={[
-          styles.fadingContainer,
-          {
-            opacity: fadeAnim // Bind opacity to animated value
-          }
-        ]}
-      >
-        <Text>Statistics: </Text>
-        <Text>Currently {countPeople} users online</Text>
-        <Text>User Locations:</Text>
-        <Text>{stats}</Text>
-      </Animated.View>   
-      <StatusBar style="auto" />
+          <Text>Latitude: {userData.latitude}</Text>
+          <Text>Longitude: {userData.longitude}</Text>
+        </Animated.View>
+        <View style={styles.paralel}>
+          <Animated.View
+              style={[
+                styles.fadingContainer2,
+                {
+                  opacity: fadeAnim // Bind opacity to animated value
+                }
+              ]}
+            >
+          <Text>Country:</Text>
+          <Text>County:</Text>
+          <Text>District/Town:</Text>
+          <Text>Postcode:</Text>
+        </Animated.View>  
+        <Animated.View
+            style={[
+              styles.fadingContainer2,
+              {
+                opacity: fadeAnim // Bind opacity to animated value
+              }
+            ]}
+          >
+            <Text>{userData.country}</Text>
+            <Text>{userData.county}</Text>
+            <Text>{userData.location}</Text>
+            <Text>{userData.postcode}</Text>      
+          </Animated.View>  
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: '#02b2e8',
-    },
-    fadingContainer: {
-      paddingVertical: 8,
-      paddingHorizontal: 16,
-      backgroundColor: "powderblue"
-    },
-    fadingText: {
-      fontSize: 28,
-      textAlign: "center",
-      margin: 10
-    },
-    buttonRow: {
-      flexDirection: "row",
-      marginVertical: 16
-    }
-  });
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: '#02b2e8',
+  },
+  header: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: '#02b2e8',
+  },
+  title: {
+    color: '#ffffff',
+    fontFamily: "notoserif",
+    fontSize: 25,
+    fontWeight: "bold",
+    paddingTop: 45,
+    paddingBottom: 15
+  },
+  fadingContainer: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: "powderblue",
+    marginTop: 20
+  },
+  fadingContainer1: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: "powderblue",
+    marginBottom: 20,
+    marginTop: 20
+  },
+  fadingContainer2: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: "powderblue",
+    marginRight: 10,
+    marginTop: 10
+  },
+  fadingText: {
+    fontSize: 28,
+    textAlign: "center",
+    margin: 10
+  },
+  buttonRow: {
+    flexDirection: "row",
+    marginVertical: 16
+  },
+  paralel: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  }
+});

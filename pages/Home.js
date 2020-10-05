@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
 import io from 'socket.io-client';
 
@@ -21,19 +21,28 @@ export default function Home({ navigation }) {
                 }}
                 title='Find me'
                 />
+                <View style={styles.padd}>
+                <Button color="grey" variant="contained"
+                    onPress={() => {
+                        navigation.navigate('About_us')
+                    }}
+                    title='About us'
+                />
             </View>
+        </View>
 );
 }
 
+
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#02b2e8',
-      alignItems: 'center',
-      justifyContent: 'center',
+        flex: 1,
+        backgroundColor: '#02b2e8',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     logo: {
-        width: 200, 
+        width: 200,
         height: 150,
     },
     team: {
@@ -41,7 +50,12 @@ const styles = StyleSheet.create({
         fontFamily: "notoserif",
         fontSize: 40,
         fontWeight: "bold"
-        
+
+    },
+    padd: {
+        marginTop: 10,
+        paddingTop: 10
+
     },
 
-  });
+});
