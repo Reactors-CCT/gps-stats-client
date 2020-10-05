@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image } from 'react-native';
+import { StyleSheet, Text, View} from 'react-native';
 
+//showing AboutUs Screen Components
 export default function Aboutus({ navigation }) {
     
     return (
@@ -16,6 +17,7 @@ export default function Aboutus({ navigation }) {
     );
 }
 
+//Stylesheet for AboutUs screen
 const styles = StyleSheet.create({
     container: {
         flex: 1,

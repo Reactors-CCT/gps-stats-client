@@ -1,14 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
-import io from 'socket.io-client';
 
+//importing socket.io-client and connecting to the server
+import io from 'socket.io-client';
 var dev = false;
 var hostname = dev?  'http://localhost:3000' : 'https://gps-stats-server.herokuapp.com';
-
 console.log("Connecting to " + hostname);
-
 const socket = io.connect(hostname);
 
+//showing Home Screen Components
 export default function Home({ navigation }) {
     return (
         <View style={styles.container}>
@@ -24,16 +24,16 @@ export default function Home({ navigation }) {
                 <View style={styles.padd}>
                 <Button color="grey" variant="contained"
                     onPress={() => {
-                        navigation.navigate('About_us')
+                        navigation.navigate('AboutUs')
                     }}
-                    title='About us'
+                    title='About Us'
                 />
             </View>
         </View>
 );
 }
 
-
+//Stylesheet for Home
 const styles = StyleSheet.create({
     container: {
         flex: 1,
