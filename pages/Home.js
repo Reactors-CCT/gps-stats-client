@@ -19,7 +19,7 @@ const socket = io.connect(hostname);
 //  Showing Home Screen Components
 export default function Home({ navigation }) {
   // Loading fonts
-  let [fontLoaded, error] = useFonts({
+  useFonts({
     Raleway_400Regular,
     Raleway_700Bold,
   });
@@ -42,7 +42,7 @@ export default function Home({ navigation }) {
   );
 }
 
-//Stylesheet for Home
+//  Stylesheet for Home
 const styles = StyleSheet.create({
   container: {
     flex: 1,

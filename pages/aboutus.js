@@ -9,9 +9,10 @@ import {
 //  Importing library for Icons
 import { FontAwesome5 } from "@expo/vector-icons";
 
-//showing AboutUs Screen Components
+//  Showing AboutUs Screen Components
 export default function Aboutus({ navigation }) {
-  let [fontLoaded, error] = useFonts({
+  //  Loading fonts
+  useFonts({
     Raleway_400Regular,
     Raleway_700Bold,
   });

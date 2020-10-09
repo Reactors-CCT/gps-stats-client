@@ -14,17 +14,17 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import Geolocation from "@react-native-community/geolocation";
 
 export default function FindMe({ navigation }) {
-  //recovers socket id from Home screen
+  //  Recovers socket id from Home screen
   const socket = navigation.state.params.socket;
-  //stores statistics
+  // Stores statistics
   const [stats, setStats] = useState("");
-  //stores user's socket
+  // Stores user's socket
   const [user, setUser] = useState(socket.id);
-  //stores the currect active sockets
+  //  Stores the currect active sockets
   const [countPeople, setCountPeople] = useState(0);
-  //used to enable or disable button
+  //  Used to enable or disable button
   const [isLocated, setIsLocated] = useState(true);
-  //stores user's data
+  //  Stores user's data
   const [userData, setUserData] = useState({
     userSocket: "",
     latitude: 0,
@@ -35,16 +35,16 @@ export default function FindMe({ navigation }) {
     postcode: "",
   });
 
-  //used for the animated boxes style
+  //  Used for the animated boxes style
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  //Loading fonts
-  let [fontLoaded, error] = useFonts({
+  //  Loading fonts
+  useFonts({
     Raleway_400Regular,
     Raleway_600SemiBold,
     Raleway_700Bold,
   });
 
-  //creates an interval where refreshes the statistics every 1 second
+  //  Creates an interval where refreshes the statistics every 1 second
   useEffect(() => {
     const interval = setInterval(() => {
       socket.emit("refresh");
@@ -54,12 +54,12 @@ export default function FindMe({ navigation }) {
     };
   }, []);
 
-  //stores user's socket for every connection
+  //  Stores user's socket for every connection
   socket.on("newUser", (data) => {
     setUser(data);
   });
 
-  //refreshes the stats with the data recovered from the server
+  //  Refreshes the stats with the data recovered from the server
   socket.on("newStats", (data) => {
     let textStats = "";
     let counter = 0;
@@ -71,7 +71,7 @@ export default function FindMe({ navigation }) {
     setStats(textStats);
   });
 
-  //open cage function to retrieve data using the latitude and longitude
+  //  Open cage function to retrieve data using the latitude and longitude
   let findLocation = (lat, long) => {
     let url =
       "https://api.opencagedata.com/geocode/v1/json?key=44a9f29b61514c1bb30d4781d418d6f3&q=" +
@@ -89,14 +89,14 @@ export default function FindMe({ navigation }) {
         } else if ("town" in json.results[0].components) {
           loc = json.results[0].components.town;
         }
-        //calls function to save data
+        //  Calls function to save data
         saveData(lat, long, loc, json.results[0].components);
-        //emitting event to send data to the server
+        //  Emitting event to send data to the server
         return socket.emit("sendData", { user, loc });
       });
   };
 
-  //function to store data recovered from opencage into a variable
+  //  Function to store data recovered from opencage into a variable
   function saveData(lat, long, loc, data) {
     return setUserData({
       userSocket: user,
@@ -109,29 +109,37 @@ export default function FindMe({ navigation }) {
     });
   }
 
-  //main function called when the button is pressed
+  //  Main function called when the button is pressed
   function locateMe() {
-    //gets the position of the user
+    //  Gets the position of the user
     Geolocation.getCurrentPosition(
       (position) => {
-        //calling opencage function using that position
+        //  Calling opencage function using the coords achieved
         findLocation(position.coords.latitude, position.coords.longitude);
       },
-      (error) => {
-        console.log("couldn't get position");
+      //  Calling error function
+      (err) => { 
+        errorMessage(err);
       },
+      //  Enabling accuracy option, setting time options
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 2000 }
     );
-    //starts animation to present the text and statistics
+    //  Starts animation to present the text and statistics
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 3000,
     }).start();
-    //disables button
+
+    //  Disables button
     setIsLocated(false);
   }
 
-  //displays components
+  //  Function called in case of error
+  function errorMessage(err){
+    navigation.navigate("ErrorPage", {err});
+  }
+
+  //  Displays components
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to FindMe App!</Text>
@@ -148,7 +156,7 @@ export default function FindMe({ navigation }) {
           styles.fadingContainer,
           {
             opacity: fadeAnim, // Bind opacity to animated value
-          },
+          }
         ]}
       >
         <Text style={styles.subtitle}>LOCATION </Text>
@@ -166,7 +174,7 @@ export default function FindMe({ navigation }) {
           styles.fadingContainer,
           {
             opacity: fadeAnim, // Bind opacity to animated value
-          },
+          }
         ]}
       >
         <Text style={styles.subtitle}>DETAILS </Text>
@@ -192,12 +200,12 @@ export default function FindMe({ navigation }) {
           styles.fadingContainer,
           {
             opacity: fadeAnim, // Bind opacity to animated value
-          },
+          }
         ]}
       >
         <Text style={styles.subtitle}>STATISTICS </Text>
         <View style={styles.list}>
-          <Text>Currently {countPeople} users online</Text>
+          <Text>Currently {countPeople} user(s) online</Text>
         </View>
         <Text style={styles.subtitle2}>User Locations</Text>
         <View style={styles.list}>
@@ -209,7 +217,7 @@ export default function FindMe({ navigation }) {
           styles.fadingContainerAboutUs,
           {
             opacity: fadeAnim, // Bind opacity to animated value
-          },
+          }
         ]}
       >
         <Button
@@ -225,7 +233,7 @@ export default function FindMe({ navigation }) {
   );
 }
 
-//Stylesheet for FindMe Screen
+//  Stylesheet for FindMe Screen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -296,5 +304,5 @@ const styles = StyleSheet.create({
   },
   listRow: {
     flex: 1,
-  },
+  }
 });
